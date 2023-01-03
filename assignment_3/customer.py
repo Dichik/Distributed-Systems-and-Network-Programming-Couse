@@ -6,11 +6,11 @@ class Customer():
         self.password = password
         self.talks = {}
     
-    def addTalk(self, user):
+    def addTalk(self, user) -> None:
         username = user.getUsername()
         self.talks[username] = []
 
-    def addMessage(self, message, user):
+    def addMessage(self, message, user) -> None:
         username = user.getUsername()
         self.talks[username].append(message)
 
