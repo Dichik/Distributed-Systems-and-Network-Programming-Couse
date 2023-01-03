@@ -1,12 +1,12 @@
 import socket, pickle
 
-from message import Message
+from entities.message import Message
 
 MAX = 1024
 PORT = 1060
 
 def server_program():
-    server = socket.socket()
+    server = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
     hostname = socket.gethostbyname("localhost")
     server.bind((hostname, PORT))
 
@@ -19,7 +19,10 @@ def server_program():
         encoded_data = conn.recv(MAX)
         data: Message = pickle.loads(encoded_data)
         if data:
-            print ("The client at", address, "says:", repr(data.getObj()))
+            option = data.getOption()
+            obj = data.getObj()
+            print(option.value)
+            print ("The client at", address, "says something")
             message = "test message"
             conn.send(pickle.dumps(message))
         else:

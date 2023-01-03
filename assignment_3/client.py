@@ -1,11 +1,55 @@
 import socket, pickle
-from message import Message
-from option import Option
 
-import customer as c
+
+from entities.message import Message
+from entities.option import Option
+from entities.connection import Connection
+from entities.customer import Customer
+from entities.talk import Talk
 
 MAX = 1064
 PORT = 1060
+
+def handle_register_option() -> Message:
+    name = input("enter name: ")
+    surname = input("enter surname: ")
+    username = input("enter username: ")
+    password = input("enter password: ")
+
+    customer = Customer(name, surname, username, password)
+    return Message(
+        Option.REGISTER,
+        pickle.dumps(customer)
+    )
+
+def handle_connect_option() -> Message:
+    from_username = input("enter from_username: ")
+    to_username = input("enter to_username: ")
+
+    connection = Connection(from_username, to_username)
+    return Message(
+        Option.CONNECT,
+        pickle.dumps(connection)
+    )
+
+def handle_talk_option():
+    from_username = input("enter from_username: ")
+    to_username = input("enter to_username: ")
+    talk = input("enter talk: ")
+
+    talk = Talk(from_username, to_username, talk)
+    return Message(
+        Option.TALK,
+        pickle.dumps(talk)
+    )
+
+def get_option_from_input():
+    print("options:")
+    print("1. register user")
+    print("2. create connection")
+    print("3. create talk")
+    option = int(input("enter 1, 2 or 3: "))
+    return option
 
 def client_program():
     client = socket.socket()
@@ -15,34 +59,15 @@ def client_program():
 
     isConnected = True
     while isConnected:
-        print("options:")
-        print("1. register user")
-        print("2. create connection")
-        print("3. create talk")
-        option = int(input("enter 1, 2 or 3: "))
-        message = None
+        option = get_option_from_input()
 
+        message = None
         if option == Option.REGISTER.value:
-            name = input("enter name: ")
-            surname = input("enter surname: ")
-            username = input("enter username: ")
-            password = input("enter password: ")
-            customer = c.Customer(name, surname, username, password)
-            ... 
-            # save customer
-            message = Message(
-                Option.REGISTER,
-                pickle.dumps(customer)
-            )
+            message = handle_register_option()
         elif option == Option.CONNECT.value:
-            ...
-            # take username and username(2) as input
-            # create connection
+            message = handle_connect_option()
         elif option == Option.TALK.value:
-            ...
-            # take username and username(2) as input
-            # take message from their conversation (what about simulating real conversation?)
-            # create talk between users
+            message = handle_talk_option()
         else:
             print("invalid option, please try again")
             continue
