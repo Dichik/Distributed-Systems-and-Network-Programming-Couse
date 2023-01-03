@@ -1,4 +1,6 @@
-class Customer(): 
+
+
+class Customer: 
     def __init__(self, name, surname, username, password) -> None:
         self.name = name
         self.surname = surname
@@ -20,3 +22,8 @@ class Customer():
     
     def getUsername(self):
         return self.username
+
+    def __str__(self) -> str:
+        return "\nName: " + self.name \
+                + "\nSurname: " + self.surname \
+                + "\nUsername: " + self.password

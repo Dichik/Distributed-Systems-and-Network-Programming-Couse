@@ -1,4 +1,6 @@
-import socket
+import socket, pickle
+
+from message import Message
 
 MAX = 1024
 PORT = 1060
@@ -14,11 +16,12 @@ def server_program():
     conn, address = server.accept()
     isConnected = True
     while isConnected:
-        data = conn.recv(MAX).decode()
+        encoded_data = conn.recv(MAX)
+        data: Message = pickle.loads(encoded_data)
         if data:
-            print ("The client at", address, "says:", repr(data))
+            print ("The client at", address, "says:", repr(data.getObj()))
             message = "test message"
-            conn.send(message.encode())
+            conn.send(pickle.dumps(message))
         else:
             isConnected = False
             print ('Pretending to drop packet from', address)
