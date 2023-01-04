@@ -56,10 +56,10 @@ def get_option_from_input():
     print("options:")
     print("1. register user")
     print("2. create connection")
-    print("3. create talk")
+    print("3. add message to talk")
     print("4. get talk")
     print("5. exit")
-    option = int(input("enter 1, 2 or 3: "))
+    option = int(input("enter number [1-5]: "))
     return option
 
 def client_program():
@@ -88,7 +88,8 @@ def client_program():
             continue
 
         client.send(pickle.dumps(message))
-        data = client.recv(MAX).decode()
+        encoded_data = client.recv(MAX)
+        data = pickle.loads(encoded_data)
         if data:
             print("Received from server:", data)
         else:

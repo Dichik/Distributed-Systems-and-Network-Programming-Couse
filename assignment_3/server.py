@@ -29,11 +29,11 @@ def server_program():
             if option == Option.REGISTER:
                 obj: Customer = pickle.loads(data.get_obj())
                 username = obj.get_username()
-                database[username] = obj
-                if username not in database.keys():
-                    message = "username is not valid, please register"
+                if username in database.keys():
+                    message = "username is already registered, please register"
                 else:
-                    message = "user was registered successfully"
+                    database[username] = obj
+                    message = f"user [{username}] was registered successfully"
             elif option == Option.CONNECT:
                 obj: Connection = pickle.loads(data.get_obj())
                 from_username = obj.get_from()
@@ -43,7 +43,8 @@ def server_program():
                     message = "specify correctly both usernames"
                 else:
                     database[from_username].add_talk(to_username)
-                    message = "connection was created successfully"
+                    database[to_username].add_talk(from_username)
+                    message = f"connection between {from_username} and {to_username} was created successfully"
             elif option == Option.CREATE_TALK:
                 obj: Talk = pickle.loads(data.get_obj())
                 from_username = obj.get_from()
@@ -54,7 +55,8 @@ def server_program():
                     message = "specify correctly both usernames"
                 else:
                     database[from_username].add_message(to_username, talk)
-                    message = "message was added successfully"
+                    database[to_username].add_message(from_username, talk)
+                    message = f"message  was added successfully to talk between {from_username} and {to_username}"
             elif option == Option.GET_TALK:
                 obj: Connection = pickle.loads(data.get_obj())
                 from_username = obj.get_from()
@@ -66,7 +68,7 @@ def server_program():
                 else:
                     message = database[from_username].get_message(to_username)
             
-            conn.send(message.encode())
+            conn.send(pickle.dumps(message))
         else:
             isConnected = False
             print ('Pretending to drop packet from', address)
