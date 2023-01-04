@@ -2,6 +2,9 @@ import socket, pickle
 
 from entities.message import Message
 from entities.option import Option
+from entities.talk import Talk
+from entities.connection import Connection
+from entities.customer import Customer
 
 MAX = 1024
 PORT = 1060
@@ -21,25 +24,27 @@ def server_program():
         encoded_data = conn.recv(MAX)
         data: Message = pickle.loads(encoded_data)
         if data:
-            option = data.getOption()
-            obj = data.getObj()
+            option = data.get_option()
 
             if option == Option.REGISTER:
-                username = obj.getUsername()
+                obj: Customer = pickle.loads(data.get_obj())
+                username = obj.get_username()
                 database[username] = obj
             elif option == Option.CONNECT:
-                from_username = obj.getFrom()
-                to_username = obj.getTo()
-                database[from_username].addTalk(to_username)
+                obj: Connection = pickle.loads(data.get_obj())
+                from_username = obj.get_from()
+                to_username = obj.get_to()
+                database[from_username].add_talk(to_username)
             elif option == Option.TALK:
-                from_username = obj.getFrom()
-                to_username = obj.getTo()
-                talk = obj.getTalk()
-                database[from_username].addMessage(to_username, talk)
+                obj: Talk = pickle.loads(data.get_obj())
+                from_username = obj.get_from()
+                to_username = obj.get_to()
+                talk = obj.get_talk()
+                database[from_username].add_message(to_username, talk)
 
             print ("The client at", address, "says something")
             message = "test message"
-            conn.send(pickle.dumps(message))
+            conn.send(message.encode())
         else:
             isConnected = False
             print ('Pretending to drop packet from', address)

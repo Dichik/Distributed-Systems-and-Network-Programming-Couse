@@ -8,8 +8,8 @@ class Message:
         self.option = option
         self.obj = obj
     
-    def getOption(self) -> Option:
+    def get_option(self) -> Option:
         return self.option
 
-    def getObj(self):
+    def get_obj(self):
         return self.obj

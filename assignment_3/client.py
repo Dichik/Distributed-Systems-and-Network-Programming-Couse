@@ -73,10 +73,9 @@ def client_program():
             continue
 
         client.send(pickle.dumps(message))
-        encoded_data = client.recv(MAX)
-        data = pickle.loads(encoded_data)
+        data = client.recv(MAX).decode()
         if data:
-            print("Received from server:", data.__str__())
+            print("Received from server:", data)
         else:
             isConnected = False
             print("terminating...")

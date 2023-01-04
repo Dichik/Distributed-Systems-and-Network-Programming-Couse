@@ -1,9 +1,9 @@
-from connection import Connection
+from entities.connection import Connection
 
 class Talk(Connection):
     def __init__(self, from_username, to_username, talk) -> None:
-        super(from_username, to_username)
+        super().__init__(from_username, to_username)
         self.talk = talk
 
-    def getTalk(self):
+    def get_talk(self):
         return self.talk

@@ -8,19 +8,16 @@ class Customer:
         self.password = password
         self.talks = {}
     
-    def addTalk(self, user) -> None:
-        username = user.getUsername()
+    def add_talk(self, username) -> None:
         self.talks[username] = []
 
-    def addMessage(self, message, user) -> None:
-        username = user.getUsername()
+    def add_message(self, username, message) -> None:
         self.talks[username].append(message)
 
-    def getMessage(self, user):
-        username = user.getUsername()
+    def get_message(self, username):
         return self.talks[username]
     
-    def getUsername(self):
+    def get_username(self):
         return self.username
 
     def __str__(self) -> str:
