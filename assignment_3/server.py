@@ -25,25 +25,47 @@ def server_program():
         data: Message = pickle.loads(encoded_data)
         if data:
             option = data.get_option()
-
+            message = None
             if option == Option.REGISTER:
                 obj: Customer = pickle.loads(data.get_obj())
                 username = obj.get_username()
                 database[username] = obj
+                if username not in database.keys():
+                    message = "username is not valid, please register"
+                else:
+                    message = "user was registered successfully"
             elif option == Option.CONNECT:
                 obj: Connection = pickle.loads(data.get_obj())
                 from_username = obj.get_from()
                 to_username = obj.get_to()
-                database[from_username].add_talk(to_username)
-            elif option == Option.TALK:
+                if from_username not in database.keys() \
+                    or to_username not in database.keys():
+                    message = "specify correctly both usernames"
+                else:
+                    database[from_username].add_talk(to_username)
+                    message = "connection was created successfully"
+            elif option == Option.CREATE_TALK:
                 obj: Talk = pickle.loads(data.get_obj())
                 from_username = obj.get_from()
                 to_username = obj.get_to()
                 talk = obj.get_talk()
-                database[from_username].add_message(to_username, talk)
+                if from_username not in database.keys() \
+                    or to_username not in database.keys():
+                    message = "specify correctly both usernames"
+                else:
+                    database[from_username].add_message(to_username, talk)
+                    message = "message was added successfully"
+            elif option == Option.GET_TALK:
+                obj: Connection = pickle.loads(data.get_obj())
+                from_username = obj.get_from()
+                to_username = obj.get_to()
 
-            print ("The client at", address, "says something")
-            message = "test message"
+                if from_username not in database.keys() \
+                    or to_username not in database.keys():
+                    message = "specify correctly both usernames"
+                else:
+                    message = database[from_username].get_message(to_username)
+            
             conn.send(message.encode())
         else:
             isConnected = False

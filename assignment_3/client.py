@@ -32,15 +32,24 @@ def handle_connect_option() -> Message:
         pickle.dumps(connection)
     )
 
-def handle_talk_option():
+def handle_create_talk_option():
     from_username = input("enter from_username: ")
     to_username = input("enter to_username: ")
     talk = input("enter talk: ")
 
     talk = Talk(from_username, to_username, talk)
     return Message(
-        Option.TALK,
+        Option.CREATE_TALK,
         pickle.dumps(talk)
+    )
+
+def handle_get_talk_option():
+    from_username = input("enter from_username: ")
+    to_username = input("enter to_username: ")
+    connection = Connection(from_username, to_username)
+    return Message(
+        Option.GET_TALK,
+        pickle.dumps(connection)
     )
 
 def get_option_from_input():
@@ -48,6 +57,8 @@ def get_option_from_input():
     print("1. register user")
     print("2. create connection")
     print("3. create talk")
+    print("4. get talk")
+    print("5. exit")
     option = int(input("enter 1, 2 or 3: "))
     return option
 
@@ -56,9 +67,9 @@ def client_program():
     hostname = socket.gethostbyname("localhost")
     client.connect((hostname, PORT))
     print ("Client socket name is", client.getsockname())
+    print("Running on port", PORT)
 
-    isConnected = True
-    while isConnected:
+    while True:
         option = get_option_from_input()
 
         message = None
@@ -66,8 +77,12 @@ def client_program():
             message = handle_register_option()
         elif option == Option.CONNECT.value:
             message = handle_connect_option()
-        elif option == Option.TALK.value:
-            message = handle_talk_option()
+        elif option == Option.CREATE_TALK.value:
+            message = handle_create_talk_option()
+        elif option == Option.GET_TALK.value:
+            message = handle_get_talk_option()
+        elif option == Option.EXIT.value:
+            break
         else:
             print("invalid option, please try again")
             continue
@@ -77,8 +92,8 @@ def client_program():
         if data:
             print("Received from server:", data)
         else:
-            isConnected = False
             print("terminating...")
+            break
 
 
 if __name__ == "__main__":
